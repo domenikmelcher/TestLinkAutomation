@@ -1,0 +1,5 @@
+C:\GSC\TestLinkAutomation\TestLinkAutomation.SVN.LogAnalyzer\TestLinkAutomation.SVN.LogAnalyzer\bin\Debug\InputFile\out.diff
+C:\GSC\TestLinkAutomation\TestLinkAutomation.SVN.LogAnalyzer\TestLinkAutomation.SVN.LogAnalyzer\bin\Debug\TestLinkAutomation.SVN.LogAnalyzer.exe
+C:\GSC\TestLinkAutomation\TestLinkAutomation.SVN.LogAnalyzer\TestLinkAutomation.SVN.LogAnalyzer\bin\Debug\TestLinkAutomation.SVN.LogAnalyzer.pdb
+C:\GSC\TestLinkAutomation\TestLinkAutomation.SVN.LogAnalyzer\TestLinkAutomation.SVN.LogAnalyzer\obj\x86\Debug\TestLinkAutomation.SVN.LogAnalyzer.exe
+C:\GSC\TestLinkAutomation\TestLinkAutomation.SVN.LogAnalyzer\TestLinkAutomation.SVN.LogAnalyzer\obj\x86\Debug\TestLinkAutomation.SVN.LogAnalyzer.pdb
