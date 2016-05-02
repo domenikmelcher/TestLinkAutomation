@@ -1,1 +1,6 @@
 TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer/bin/
+TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer/obj/
+TestLinkAutomation.Common/TestLinkAutomation.Common/TestLinkAutomation.Common/bin/
+TestLinkAutomation.Common/TestLinkAutomation.Common/TestLinkAutomation.Common/obj/
+*.suo
+*.user
