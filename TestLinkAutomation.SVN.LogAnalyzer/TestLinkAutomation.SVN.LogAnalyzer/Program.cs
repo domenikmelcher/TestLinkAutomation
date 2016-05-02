@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Text.RegularExpressions;
+using TestLinkAutomation.SVN.LogAnalyzer.CommandLine;
+using Plossum.CommandLine;
+using SharpSvn;
 
 namespace TestLinkAutomation.SVN.LogAnalyzer
 {
@@ -28,19 +31,18 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
 
         public static string RegexVariable = @"^((\s*|([\+\-]\s*))?\w+(\s*[*])?\s+\w+)?$";
 
-        static void Main(string[] args)
-        {          
+        static void Main()
+        {
+            Options options = ProcessCommandLineParams();
 
-            string filename = args[0];
-
-           
+            string filename = options.input;           
 
             if (filename.Contains(".diff") && File.Exists(filename))
             {
                 StreamReader fs = new StreamReader(filename);
                 string wholeFile = fs.ReadToEnd();
 
-                myWriter = new StreamWriter(@"output.txt");
+                myWriter = new StreamWriter(options.output+"output.txt");
 
 
                 string[] changedFiles = Regex.Split(wholeFile, "\nIndex");
@@ -59,11 +61,25 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
             myWriter.Close();
         }
 
-
-
-        public class class2
+        private static Options ProcessCommandLineParams()
         {
+            Options options = new Options();
+            CommandLineParser parser = new CommandLineParser(options);
+            parser.Parse();
 
+            if (options.Help)
+            {
+                Console.WriteLine(parser.UsageInfo.GetOptionsAsString(90));
+                Environment.Exit(0);
+            }
+            else
+                if (parser.HasErrors)
+                {
+                    Console.WriteLine(parser.UsageInfo.GetErrorsAsString(90));
+                    Environment.Exit(-1);
+                }
+
+            return options;
         }
 
         private static void ProcessFile(string fileContent)
@@ -105,7 +121,7 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
                     .Select(x => x.Value).ToArray();
 
             allFunctions = allFunctions.Where(x => !Regex.IsMatch(x, RemoveSoughPattern) && !string.IsNullOrWhiteSpace(x)).ToArray();
-            allFunctions = allFunctions.Where(x => !x.Replace("\n",string.Empty).Replace(" ",string.Empty)[0].Equals('-')).ToArray();
+            //allFunctions = allFunctions.Where(x => !x.Replace("\n",string.Empty).Replace(" ",string.Empty)[0].Equals('-')).ToArray();
 
             List<string> changedFunctions = new List<string>();
             string separatedFileContent = fileContent;
@@ -116,10 +132,10 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
 
                 if (indexFunctionStart != -1)
                 {
-                    int indexFunctionEnd = fileContent.Length ;
+                    int indexFunctionEnd = fileContent.Length;
 
                     if (i < allFunctions.Count() - 2)
-                        indexFunctionEnd = fileContent.IndexOf(allFunctions[i + 1], indexFunctionStart);                   
+                        indexFunctionEnd = fileContent.IndexOf(allFunctions[i + 1], indexFunctionStart);
 
                     if (indexFunctionEnd != -1)
                     {
@@ -127,7 +143,7 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
                         if (!string.IsNullOrEmpty(functionBody))
                         {
                             MatchCollection col = Regex.Matches(functionBody, DetermineSVNChangedPattern);
-                            if (col.Count > 0)
+                            if (col.Count > 0 && FuncitonStillPresentInCurrentRevision(allFunctions[i]))
                                 changedFunctions.Add(allFunctions[i]);
                         }
                     }
@@ -202,6 +218,27 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
             //    }
             //}
 
+        }
+
+        private static bool FuncitonStillPresentInCurrentRevision(string function)
+        {
+            return !function.Replace("\n", string.Empty).Replace(" ", string.Empty)[0].Equals('-');
+        }
+
+        private static void PerformSVNDiff(Options op)
+        {
+            SvnDiffSummaryArgs args = new SvnDiffSummaryArgs();
+            args.Depth = SvnDepth.Infinity;
+
+            using (var client = new SvnClient())
+            {
+                //var location = new Uri("http://my.example/repos/trunk");
+                client.DiffSummary(new SvnUriTarget(op.svn_repository, op.svn_revision), new SvnUriTarget(op.svn_repository, SvnRevision.Head), args,
+                                   delegate(object sender, SvnDiffSummaryEventArgs e)
+                                   {
+                                       // TODO: Handle result
+                                   });
+            }
         }
     }
 }
