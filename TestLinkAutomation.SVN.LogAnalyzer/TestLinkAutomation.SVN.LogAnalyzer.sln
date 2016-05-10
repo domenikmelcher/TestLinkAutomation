@@ -5,14 +5,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLinkAutomation.SVN.LogA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLinkAutomation.Common", "..\..\TestLinkAutomation.Common\TestLinkAutomation.Common\TestLinkAutomation.Common\TestLinkAutomation.Common.csproj", "{586E5A88-45DC-4D4E-838F-3C6ADA57EF6A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLinkAutomation.SVN.LogAnalyzer.Test", "TestLinkAutomation.SVN.LogAnalyzer.Test\TestLinkAutomation.SVN.LogAnalyzer.Test.csproj", "{EC024DFA-BCB8-4CB4-8C6A-83A20EED574B}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D7816E46-9E2A-44F1-AF7E-27366BF7B1C9}"
 	ProjectSection(SolutionItems) = preProject
 		Local.testsettings = Local.testsettings
 		TestLinkAutomation.SVN.LogAnalyzer.vsmdi = TestLinkAutomation.SVN.LogAnalyzer.vsmdi
 		TraceAndTestImpact.testsettings = TraceAndTestImpact.testsettings
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLinkAutomation.SVN.LogAnalyzer.Test", "..\TestLinkAutomation.SVN.LogAnalyzer.Test\TestLinkAutomation.SVN.LogAnalyzer.Test.csproj", "{EC024DFA-BCB8-4CB4-8C6A-83A20EED574B}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution

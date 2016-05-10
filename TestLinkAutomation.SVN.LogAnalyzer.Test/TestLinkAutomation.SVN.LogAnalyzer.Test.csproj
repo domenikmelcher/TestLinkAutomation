@@ -50,7 +50,7 @@
     <Compile Include="ModulLogicTester.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TestLinkAutomation.SVN.LogAnalyzer\TestLinkAutomation.SVN.LogAnalyzer.csproj">
+    <ProjectReference Include="..\TestLinkAutomation.SVN.LogAnalyzer\TestLinkAutomation.SVN.LogAnalyzer\TestLinkAutomation.SVN.LogAnalyzer.csproj">
       <Project>{D8FF4776-9C0B-47B0-A4DB-AC42913C9785}</Project>
       <Name>TestLinkAutomation.SVN.LogAnalyzer</Name>
     </ProjectReference>
