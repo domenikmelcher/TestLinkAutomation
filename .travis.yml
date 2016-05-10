@@ -8,7 +8,7 @@ solution: ./TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyze
 install:
   - nuget restore ./TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer.sln
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
-   - git clone https://github.com/domenikmelcher/TestLinkAutomation.Common.git $TRAVIS_BUILD_DIR
+   - git clone --branch=develop https://github.com/domenikmelcher/TestLinkAutomation.Common.git
 script:
   - xbuild /p:Configuration=Release ./TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer.sln
   - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./TestLinkAutomation.SVN.LogAnalyzer.Test/bin/Release/TestLinkAutomation.SVN.LogAnalyzer.Test.dll
