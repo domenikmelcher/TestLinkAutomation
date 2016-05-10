@@ -6,7 +6,7 @@ branches:
     - develop
 solution: ./TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer.sln
 before_install:
-- git clone --branch=develop https://github.com/domenikmelcher/TestLinkAutomation.Common.git /home/travis/build/domenikmelcher/
+- git clone --branch=develop https://github.com/domenikmelcher/TestLinkAutomation.Common.git /home/travis/build/domenikmelcher/TestLinkAutomation.Common
 install:
   - nuget restore ./TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer.sln
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
