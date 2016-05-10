@@ -1,4 +1,9 @@
 language: csharp
+
+# whitelist
+branches:
+  only:
+    - develop
 solution: ./TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer.sln
 before_install:
   - git clone https://github.com/domenikmelcher/TestLinkAutomation.Common.git ../../../TestLinkAutomation.Common/
