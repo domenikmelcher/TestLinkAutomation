@@ -2,63 +2,76 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TestLinkAutomation.Common;
+using TestLinkAutomation.SVN.LogAnalyzer.CommandLine;
+using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using TestLinkAutomation.SVN.LogAnalyzer.CommandLine;
-using Plossum.CommandLine;
-using System.Diagnostics;
-using TestLinkAutomation.Common;
-using TestLinkAutomation.Common.CommandLine;
-using TestLinkAutomation.SVN.LogAnalyzer.ModulLogic;
 
-namespace TestLinkAutomation.SVN.LogAnalyzer
+namespace TestLinkAutomation.SVN.LogAnalyzer.ModulLogic
 {
-    public class Program
+    public class SVNLogAnalyzerModulLogic : ModulLogicBase<SVNLogAnalyzerCommandOptions>
     {
-        private static SVNLogAnalyzerModulLogic ModulLogic = new SVNLogAnalyzerModulLogic();
+        private string unifiedDiffContent;
+        private string outputContent;
 
-        public static StreamWriter myWriter;
-
-        public static string RegexFunctionPattern = @"(\n(\s*|([\+\-]\s*))?\w+(\s*[*])?\s+\w+)\(([^\)]+)\)";
-        public static string RemoveSoughPattern = @"((else)|(if)|(return)|(\{)|(\}))";
-        public static string DetermineSVNChangedPattern = @"(\n[\+\-])";
-
-        //WORKING PATTERN V1!!
-        //public static string RegexFunctionPattern = @"((\s*|([\+\-]\s*))?\w+(\s*[*])?\s+\w+)[(](((\n*\s*)?|([\+\-]\s*))?\w+(\s*[*])?\s+\w+[,]*)+(\n*\s*[)])?";
-        //WORKING PATTERN V2!!
-        //public static string RegexFunctionPattern = @"((\s*|([\+\-]\s*))?\w+(\s*[*])*\s+\w+)[(](((\n*\s*)?|(\n*[\+\-]\s*))?(\w+\s*)?\w+((\s*[*]*\s+)|(\s+[*]*))\w+[,]*)+(((\n*\s*)?|(\n*[\+\-]\s*))?[)])?";
-        //WORKING PATTERN V3!!
-        //public static string RegexFunctionPattern = @"((\s*|([\+\-]\s*))?\w+(\s*[*])?\s+\w+)[(](((\n*\s*)?|(\n*[\+\-]\s*))?(\w+[*]*\s*)?([:]*)?\w+((\s*[*]*\s+)|(\s+[*]*)|([\[][\]]\s+)|(\&?\s+))\w+[,]?(((\s*([\/]?[*]*[<]\s*))([\[]\w+[\]])?(\s*\w+[']?\w+)*([.]\s*[*][\/])?)?))+(((\n*\s*)?|(\n*[\+\-]\s*))?[)])?";
-
-
-        //ToDo add std:: support
-        //Todo add [] and ** support for function return type
-
-        public static string RegexVariable = @"^((\s*|([\+\-]\s*))?\w+(\s*[*])?\s+\w+)?$";
-
-        static int Main()
+        private static string RegexFunctionPattern = @"(\n(\s*|([\+\-]\s*))?\w+(\s*[*])?\s+\w+)\(([^\)]+)\)";
+        private static string RemoveSoughPattern = @"((else)|(if)|(return)|(\{)|(\}))";
+        private static string DetermineSVNChangedPattern = @"(\n[\+\-])";
+        
+        public SVNLogAnalyzerModulLogic()
         {
-            ModulLogic.InitializeModul();
-            ModulLogic.ExecuteModulLogic();
-            ModulLogic.Save();            
-
-            return Environment.ExitCode = 0;
+            CommandLineOptions = new SVNLogAnalyzerCommandOptions();
         }
 
-        
+        protected override void ExecutePreProcessing()
+        {
+            Process svnDiffCommand = new Process();
 
-        private static void ProcessFile(string fileContent)
+            ProcessStartInfo svnDiffCommandInfo = new ProcessStartInfo("CMD.exe");
+            svnDiffCommandInfo.Arguments = "/C svn diff --username=\"" + CommandLineOptions.svn_user + "\" --password=\"" + CommandLineOptions.svn_password + "\" -r HEAD:" + CommandLineOptions.svn_revision + " " + CommandLineOptions.svn_repository + " > out.diff -x \"-U10000\"";
+            svnDiffCommandInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+
+            svnDiffCommand.StartInfo = svnDiffCommandInfo;
+            svnDiffCommand.Start();
+            svnDiffCommand.WaitForExit();
+
+            StreamReader diffFileContentReader = new StreamReader("out.diff");
+            unifiedDiffContent = diffFileContentReader.ReadToEnd();
+            diffFileContentReader.Close();
+            File.Delete("out.diff");
+        }       
+
+        public override void ExecuteModulLogic()
+        {
+            ExecutePreProcessing();
+
+            if (!string.IsNullOrEmpty(unifiedDiffContent))
+            {                
+                string[] changedFiles = Regex.Split(unifiedDiffContent, "\nIndex");
+                Console.WriteLine("Changed files: {0}", changedFiles.Count());
+
+                changedFiles = changedFiles.Where(x => x.Substring(0, x.IndexOf('=')).Contains(".c")).ToArray();
+
+                foreach (string fileContent in changedFiles)
+                {
+                    ProcessFile(fileContent);
+                }
+            }
+        }
+
+        private void ProcessFile(string fileContent)
         {
             //string[] changedFunctions = null;
 
             //if (Regex.IsMatch(fileContent, RegexFunctionPattern))
             //    changedFunctions = Regex.Split(fileContent, @"\n" + RegexFunctionPattern);
 
-            string fileHeader = fileContent.Substring(0, fileContent.IndexOf('\n')).Replace(": ",string.Empty).Replace("\r",string.Empty);
-            
+            string fileHeader = fileContent.Substring(0, fileContent.IndexOf('\n')).Replace(": ", string.Empty).Replace("\r", string.Empty);
+
             //ileContent = Regex.Replace(fileContent, RemoveSoughPattern, string.Empty);
             string[] lines = fileContent.Split('\n');
-            
+
             lines = lines.Where(x => !Regex.IsMatch(x, RemoveSoughPattern)).ToArray();
             //MatchCollection variablesDeclarationMatches = Regex.Matches(fileContent, RegexVariable, RegexOptions.Compiled);
 
@@ -70,7 +83,7 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
             //        .Cast<Match>()
             //        .Select(x => x.Value).ToList());
             //}
-            
+
             //foreach (Match match in variablesDeclarationMatches)
             //{
             //    if (match != null && match.Success && !string.IsNullOrEmpty(match.Value))
@@ -86,7 +99,7 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
                     .Select(x => x.Value).ToArray();
 
             allFunctions = allFunctions.Where(x => !Regex.IsMatch(x, RemoveSoughPattern) && !string.IsNullOrWhiteSpace(x)).ToArray();
-           
+
 
             List<string> changedFunctions = new List<string>();
             string separatedFileContent = fileContent;
@@ -123,7 +136,7 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
             //Match[] functionNamesMatches = new Match[myCol.Count];
             //myCol.CopyTo(functionNamesMatches,0);
 
-            
+
             //string[] functionnamesString = functionNamesMatches.Select(x => x.Value).ToArray();
 
 
@@ -132,11 +145,13 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
 
             if (changedFunctions.Any())
             {
-                myWriter.WriteLine("\nFileName: " + fileHeader + "\n");
+                outputContent += "\nFileName: " + fileHeader + "\n";
+                //myWriter.WriteLine("\nFileName: " + fileHeader + "\n");
                 foreach (string functionname in changedFunctions)
-                    myWriter.WriteLine(functionname);
+                    outputContent += functionname + '\n';
+                    //myWriter.WriteLine(functionname);
             }
-           
+
 
             //lines = lines.Where(x => Regex.IsMatch(x, RegexFunctionPattern, RegexOptions.IgnoreCase)).ToArray();
 
@@ -187,51 +202,17 @@ namespace TestLinkAutomation.SVN.LogAnalyzer
 
         }
 
-        private static bool FuncitonStillPresentInCurrentRevision(string function)
+        public override void Save()
         {
-            return !function.Replace("\n", string.Empty).Replace(" ", string.Empty)[0].Equals('-');
+            StreamWriter myWriter = new StreamWriter(CommandLineOptions.output_path + "output.txt");
+            myWriter.Write(outputContent);
+            myWriter.Flush();
+            myWriter.Close();
         }
 
-        private static void PerformSVNDiff()
-        {            
-            
-
-            //using (var client = new SvnClient())
-            //{
-            //    client.Authentication.Clear(); // Clear a previous authentication
-            //    client.Authentication.DefaultCredentials = new System.Net.NetworkCredential(op.svn_user, op.svn_password,"wbi.nxp.com");
-
-            //    client.Authentication.SslServerTrustHandlers += delegate(object sender, SvnSslServerTrustEventArgs e)
-            //    {
-            //        e.AcceptedFailures = e.Failures;
-            //        e.Save = true; // Save acceptance to authentication store
-            //    };
-
-               
-
-            //    Uri serverUri = new Uri(op.svn_repository);
-            //    SvnDiffArgs args = new SvnDiffArgs();
-
-            //    //args.DiffArguments = "-r";
-
-            //    MemoryStream diffStream = new MemoryStream();
-            //    string hochkomma = "\"How to add doublequotes\"";
-            //    //string arg = "-x \"-U80\" ";
-            //    args.DiffArguments.Add("-U 30");
-            //    //args.Depth = SvnDepth.Unknown;
-
-            //    client.Diff(new SvnUriTarget(serverUri, op.svn_revision), new SvnUriTarget(serverUri, SvnRevision.Head), args, diffStream);
-
-            //    diffStream.Position = 0;
-            //    StreamReader strReader = new StreamReader(diffStream);
-            //    string str = strReader.ReadToEnd();
-            //    StreamWriter wr = new StreamWriter("diffoutput.txt");
-            //    wr.Write(str);
-            //    wr.Flush();
-            //    wr.Close();
-            //    strReader.Close();
-
-           //}
+        private bool FuncitonStillPresentInCurrentRevision(string function)
+        {
+            return !function.Replace("\n", string.Empty).Replace(" ", string.Empty)[0].Equals('-');
         }
     }
 }

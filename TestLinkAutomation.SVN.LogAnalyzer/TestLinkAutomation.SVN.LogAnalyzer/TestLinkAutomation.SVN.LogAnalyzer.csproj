@@ -11,7 +11,8 @@
     <RootNamespace>TestLinkAutomation.SVN.LogAnalyzer</RootNamespace>
     <AssemblyName>TestLinkAutomation.SVN.LogAnalyzer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -38,7 +39,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisIgnoreBuiltInRuleSets>false</CodeAnalysisIgnoreBuiltInRuleSets>
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
@@ -53,14 +54,13 @@
     <CodeAnalysisIgnoreBuiltInRules>false</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="C5">
-      <HintPath>..\..\3rdPartyLibraries\Plossum_CommandLine\C5.dll</HintPath>
+    <Reference Include="C5, Version=1.0.2.0, Culture=neutral, PublicKeyToken=06a1b38866503b69, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TestLinkAutomation.Common\3rdPartyLibraries\Plossum_CommandLine\C5.dll</HintPath>
     </Reference>
-    <Reference Include="Plossum CommandLine">
-      <HintPath>..\..\3rdPartyLibraries\Plossum_CommandLine\Plossum CommandLine.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpSvn">
-      <HintPath>..\..\3rdPartyLibraries\SharpSvn\SharpSvn.dll</HintPath>
+    <Reference Include="Plossum CommandLine, Version=0.3.0.14, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\TestLinkAutomation.Common\3rdPartyLibraries\Plossum_CommandLine\Plossum CommandLine.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -71,14 +71,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommandLine\Options.cs" />
+    <Compile Include="CommandLine\SVNLogAnalyzerCommandOptions.cs" />
+    <Compile Include="ModulLogic\SVNLogAnalyzerModulLogic.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="InputFile\out.diff">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\TestLinkAutomation.Common\TestLinkAutomation.Common\TestLinkAutomation.Common\TestLinkAutomation.Common.csproj">
+      <Project>{586E5A88-45DC-4D4E-838F-3C6ADA57EF6A}</Project>
+      <Name>TestLinkAutomation.Common</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

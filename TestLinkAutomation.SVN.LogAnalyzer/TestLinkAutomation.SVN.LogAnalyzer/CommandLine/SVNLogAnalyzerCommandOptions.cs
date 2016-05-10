@@ -3,41 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Plossum.CommandLine;
+using TestLinkAutomation.Common.CommandLine;
 
 namespace TestLinkAutomation.SVN.LogAnalyzer.CommandLine
 {
-    [CommandLineManager()]
-    public class Options
-    {
-        [CommandLineOption(Description = "Displays this help text")]
-        public bool Help = false;
-
-        [CommandLineOption(Description = "Specifies the input file in unified diff format", MinOccurs = 1)]
-        public string input
-        {
-            get { return input_string; }
-            set
-            {
-                if (String.IsNullOrEmpty(value))
-                    throw new InvalidOptionValueException(
-                        "The input diff file must not be empty", false);
-                input_string = value;
-            }
-        }
-        private string input_string;
-
-        [CommandLineOption(Description = "Specifies the output file path")]
-        public string output
-        {
-            get { return output_string; }
-            set
-            {
-                output_string = value;
-            }
-        }
-
-        private string output_string;
-
+    public class SVNLogAnalyzerCommandOptions : CommandLineOptionsBase
+    {       
         [CommandLineOption(Description = "Specifies the SVN repository", MinOccurs = 1)]
         public string svn_repository
         {
