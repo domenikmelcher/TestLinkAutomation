@@ -1,7 +1,7 @@
 language: csharp
 solution: ./TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer.sln
 before_install:
-  - git clone https://github.com/domenikmelcher/TestLinkAutomation.Common.git ../../TestLinkAutomation.Common/
+  - git clone https://github.com/domenikmelcher/TestLinkAutomation.Common.git ../../../TestLinkAutomation.Common/
 install:
   - nuget restore ./TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer.sln
   - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
