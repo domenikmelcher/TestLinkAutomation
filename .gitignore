@@ -5,3 +5,7 @@ TestLinkAutomation.Common/TestLinkAutomation.Common/TestLinkAutomation.Common/ob
 *.suo
 *.user
 TestLinkAutomation.SVN.LogAnalyzer/TestLinkAutomation.SVN.LogAnalyzer.Test/obj/
+TestLinkAutomation.SVN.LogAnalyzer.Test/bin/Debug/TestLinkAutomation.SVN.LogAnalyzer.Test.dll
+TestLinkAutomation.SVN.LogAnalyzer.Test/bin/Debug/nunit.framework.dll
+TestLinkAutomation.SVN.LogAnalyzer.Test/obj/Debug/TestLinkAutomation.SVN.LogAnalyzer.Test.csproj.FileListAbsolute.txt
+TestLinkAutomation.SVN.LogAnalyzer.Test/obj/
